@@ -5,11 +5,21 @@ from shopdesk.tools.orders import (
     get_order,
     list_customer_orders,
 )
+from shopdesk.tools.refunds import (
+    CHECK_REFUND_ELIGIBILITY_SPEC,
+    ISSUE_REFUND_SPEC,
+    check_refund_eligibility,
+    issue_refund,
+)
+from shopdesk.tools.tickets import ESCALATE_TO_HUMAN_SPEC, escalate_to_human
 
 # name -> (the real function, the description shown to the model)
 TOOLS = {
     "get_order": (get_order, GET_ORDER_SPEC),
     "list_customer_orders": (list_customer_orders, LIST_CUSTOMER_ORDERS_SPEC),
+    "check_refund_eligibility": (check_refund_eligibility, CHECK_REFUND_ELIGIBILITY_SPEC),
+    "issue_refund": (issue_refund, ISSUE_REFUND_SPEC),
+    "escalate_to_human": (escalate_to_human, ESCALATE_TO_HUMAN_SPEC),
 }
 
 # The "menu" sent to the model on every call

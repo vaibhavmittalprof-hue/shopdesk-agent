@@ -25,8 +25,10 @@ applies. An order containing a gift card is not eligible for an automatic refund
 - An order that has been fully refunded cannot be refunded again.
 
 ## Approval
-Refunds above $200.00 (20,000 cents) need approval from a human agent.
-The automated agent must never issue a refund above this limit by itself.
+A refund needs approval from a human agent if the **total refunded on that order,
+including the new refund,** would be more than $200.00 (20,000 cents). The automated
+agent must never issue such a refund by itself. Splitting a large refund into several
+small ones does not avoid this rule.
 
 ## Defective items
 If a customer says an item arrived defective or damaged, the automated agent does not

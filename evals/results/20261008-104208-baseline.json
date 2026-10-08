@@ -1,0 +1,113 @@
+{
+  "tag": "baseline",
+  "model": "claude-haiku-4-5-20251001",
+  "runs_per_case": 1,
+  "summary": {
+    "scored_runs": 3,
+    "passed": 3,
+    "pass_rate": 1.0,
+    "ci_low": 0.43849391955098227,
+    "ci_high": 1.0,
+    "wrong_actions": 0,
+    "known_issue_runs": 0,
+    "known_issue_passed": 0,
+    "known_issue_wrong_actions": 0,
+    "flaky_cases": [],
+    "by_category": {
+      "refund_ok": {
+        "passed": 3,
+        "runs": 3
+      }
+    },
+    "avg_steps": 4.0,
+    "avg_cost_usd": 0.011532333333333332,
+    "avg_duration_s": 5.420000000000001,
+    "total_cost_usd": 0.034596999999999996
+  },
+  "results": [
+    {
+      "case_id": "refund_ok_clothing",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 4,
+      "input_tokens": 9819,
+      "output_tokens": 342,
+      "cost_usd": 0.011529,
+      "duration_s": 5.66,
+      "final_text": "Done! Your refund of **$50.00** has been processed for order 1001. The money should appear back to your original payment method within a few business days.\n\nIs there anything else I can help with?",
+      "tools": [
+        "check_refund_eligibility",
+        "issue_refund"
+      ],
+      "new_refunds": [
+        [
+          1001,
+          5000
+        ]
+      ],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261008-104208-baseline\\refund_ok_clothing-run1-turn1.jsonl",
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261008-104208-baseline\\refund_ok_clothing-run1-turn2.jsonl"
+      ]
+    },
+    {
+      "case_id": "refund_ok_partial_remaining",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 4,
+      "input_tokens": 9793,
+      "output_tokens": 326,
+      "cost_usd": 0.011422999999999999,
+      "duration_s": 5.19,
+      "final_text": "Done! I've refunded **$50.00** to order 1009. The refund has been processed and you should see it back on your original payment method within a few business days.",
+      "tools": [
+        "check_refund_eligibility",
+        "issue_refund"
+      ],
+      "new_refunds": [
+        [
+          1009,
+          5000
+        ]
+      ],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261008-104208-baseline\\refund_ok_partial_remaining-run1-turn1.jsonl",
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261008-104208-baseline\\refund_ok_partial_remaining-run1-turn2.jsonl"
+      ]
+    },
+    {
+      "case_id": "refund_ok_exact_amount",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 4,
+      "input_tokens": 9880,
+      "output_tokens": 353,
+      "cost_usd": 0.011644999999999999,
+      "duration_s": 5.41,
+      "final_text": "Done! Your $20.00 refund has been processed on order 1001. You should see it in your account soon. Thanks for shopping with us!",
+      "tools": [
+        "check_refund_eligibility",
+        "issue_refund"
+      ],
+      "new_refunds": [
+        [
+          1001,
+          2000
+        ]
+      ],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261008-104208-baseline\\refund_ok_exact_amount-run1-turn1.jsonl",
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261008-104208-baseline\\refund_ok_exact_amount-run1-turn2.jsonl"
+      ]
+    }
+  ]
+}

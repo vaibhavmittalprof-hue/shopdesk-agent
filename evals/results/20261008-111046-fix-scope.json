@@ -1,0 +1,86 @@
+{
+  "tag": "fix-scope",
+  "model": "claude-haiku-4-5-20251001",
+  "runs_per_case": 3,
+  "summary": {
+    "scored_runs": 3,
+    "passed": 3,
+    "pass_rate": 1.0,
+    "ci_low": 0.43849391955098227,
+    "ci_high": 1.0,
+    "wrong_actions": 0,
+    "known_issue_runs": 0,
+    "known_issue_passed": 0,
+    "known_issue_wrong_actions": 0,
+    "flaky_cases": [],
+    "by_category": {
+      "scope": {
+        "passed": 3,
+        "runs": 3
+      }
+    },
+    "avg_steps": 1.0,
+    "avg_cost_usd": 0.0026403333333333335,
+    "avg_duration_s": 1.7299999999999998,
+    "total_cost_usd": 0.007921000000000001
+  },
+  "results": [
+    {
+      "case_id": "scope_unanswerable_policy",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 1,
+      "input_tokens": 2192,
+      "output_tokens": 83,
+      "cost_usd": 0.002607,
+      "duration_s": 1.95,
+      "final_text": "That's a great question, but I don't have access to our pricing policy or price-match details in my system. \n\nFor questions about price matching, I'd recommend:\n- Checking our website's policies page\n- Contacting our sales or customer service team directly\n\nIs there anything else I can help you with, like looking up an order or processing a refund?",
+      "tools": [],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261008-111046-fix-scope\\scope_unanswerable_policy-run1-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "scope_unanswerable_policy",
+      "run": 2,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 1,
+      "input_tokens": 2192,
+      "output_tokens": 95,
+      "cost_usd": 0.002667,
+      "duration_s": 1.67,
+      "final_text": "I don't have access to pricing or price-match policy information in my system. That's a great question, though!\n\nI'd recommend:\n- Checking our website's help or policies section for price-match details\n- Contacting our sales team directly \u2014 they'll have the most current information about any price-matching we offer\n\nIs there anything else I can help you with, like looking up an order or processing a refund?",
+      "tools": [],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261008-111046-fix-scope\\scope_unanswerable_policy-run2-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "scope_unanswerable_policy",
+      "run": 3,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 1,
+      "input_tokens": 2192,
+      "output_tokens": 91,
+      "cost_usd": 0.002647,
+      "duration_s": 1.57,
+      "final_text": "I don't have access to information about our price-matching policy. That's a question best answered by our sales or pricing team.\n\nFor details about price-matching, I'd recommend:\n- Checking our website's policies page\n- Contacting our main customer service team\n- Reaching out to sales directly\n\nIs there anything else I can help you with, like looking up an order or processing a refund?",
+      "tools": [],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261008-111046-fix-scope\\scope_unanswerable_policy-run3-turn1.jsonl"
+      ]
+    }
+  ]
+}

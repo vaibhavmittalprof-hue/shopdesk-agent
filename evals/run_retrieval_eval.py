@@ -1,16 +1,22 @@
 """
 Measure how well the policy SEARCH finds the right chunk (no AI involved).
 
-    python -m evals.run_retrieval_eval
+    python -m evals.run_retrieval_eval                                  # keyword search only
+    python -m evals.run_retrieval_eval --embedder fastembed             # + meaning search and hybrid
+    python -m evals.run_retrieval_eval --embedder fastembed --embedder fastembed:sentence-transformers/all-MiniLM-L6-v2
 
 For each question in evals/retrieval_questions.jsonl we know which chunk(s) hold the answer.
-We run the search and ask: did a correct chunk appear in the top 1 / top 3 / top 5?
+We run each search and ask: did a correct chunk appear in the top 1 / top 3 / top 5?
 """
+import argparse
 import json
 from pathlib import Path
 
 from shopdesk.rag.bm25 import BM25Index
 from shopdesk.rag.chunking import load_policy_chunks
+from shopdesk.rag.dense import DenseIndex
+from shopdesk.rag.embeddings import EmbeddingsUnavailable, make_embedder
+from shopdesk.rag.hybrid import HybridIndex
 
 QUESTIONS_PATH = Path(__file__).parent / "retrieval_questions.jsonl"
 KS = (1, 3, 5)
@@ -44,49 +50,66 @@ def evaluate(search, questions, ks=KS):
     return {"n": n, "recall": {k: hits[k] / n for k in ks}, "mrr": reciprocal_sum / n, "details": details}
 
 
-def print_scores(label, scores):
-    recall = "   ".join(f"recall@{k} {v:.0%}" for k, v in scores["recall"].items())
-    print(f"  {label:<34}{recall}   MRR {scores['mrr']:.2f}")
+def print_scores(results):
+    print(f"  {'search':<46}{'recall@1':>9}{'recall@3':>9}{'recall@5':>9}{'MRR':>7}")
+    for label, scores in results.items():
+        r = scores["recall"]
+        print(f"  {label:<46}{r[1]:>9.0%}{r[3]:>9.0%}{r[5]:>9.0%}{scores['mrr']:>7.2f}")
+
+
+def print_rank_table(results, questions):
+    """For each question, at what position did each search put the right chunk? ('-' = not in the top 5)"""
+    labels = list(results)
+    print("\nRANK OF THE RIGHT CHUNK, PER QUESTION   ('-' = not in the top 5)")
+    print(f"  {'':<6}" + "".join(f"{f'[{i}]':>6}" for i in range(1, len(labels) + 1)) + "   question")
+    for number, q in enumerate(questions):
+        ranks = [results[label]["details"][number]["rank"] for label in labels]
+        cells = "".join(f"{(str(r) if r else '-'):>6}" for r in ranks)
+        flag = "  <--" if len({bool(r and r <= 3) for r in ranks}) > 1 else ""      # the searches disagree
+        print(f"  {q['id']:<6}{cells}   {q['question'][:60]}{flag}")
+    for i, label in enumerate(labels, start=1):
+        print(f"  [{i}] {label}")
 
 
 def main():
-    chunks = load_policy_chunks()
-    questions = load_questions()
+    parser = argparse.ArgumentParser(description="Evaluate the policy search.")
+    parser.add_argument("--embedder", action="append", default=[],
+                        help="e.g. fastembed or fastembed:<model>. Repeat to compare several models.")
+    args = parser.parse_args()
+
+    chunks, questions = load_policy_chunks(), load_questions()
     print(f"{len(chunks)} chunks, {len(questions)} questions\n")
 
-    naive = BM25Index(chunks, stem=False, drop_stopwords=False)
-    better = BM25Index(chunks, stem=True, drop_stopwords=True)
-    naive_scores = evaluate(naive.search, questions)
-    better_scores = evaluate(better.search, questions)
+    bm25 = BM25Index(chunks)
+    searches = {
+        "BM25, plain words": BM25Index(chunks, stem=False, drop_stopwords=False).search,
+        "BM25, stemming + stop words": bm25.search,
+    }
+    for spec in args.embedder:
+        try:
+            embedder = make_embedder(spec)
+        except EmbeddingsUnavailable as exc:
+            print(f"  (skipping '{spec}': {exc})")
+            continue
+        dense = DenseIndex(chunks, embedder)
+        searches[f"Meaning search: {embedder.name}"] = dense.search
+        searches[f"Hybrid: BM25 + {embedder.name}"] = HybridIndex(bm25, dense).search
 
+    results = {label: evaluate(search, questions) for label, search in searches.items()}
     print("RESULTS")
-    print_scores("BM25, plain words", naive_scores)
-    print_scores("BM25, stemming + stop words", better_scores)
+    print_scores(results)
+    print_rank_table(results, questions)
 
-    print("\nQUESTIONS WHERE THE RIGHT CHUNK IS NOT IN THE TOP 3 (stemming + stop words)")
-    misses = [d for d in better_scores["details"] if d["rank"] is None or d["rank"] > 3]
+    # best MRR wins; on a tie, prefer the later (more advanced) search
+    best_label = max(results, key=lambda label: (round(results[label]["mrr"], 6), results[label]["recall"][3],
+                                                 list(results).index(label)))
+    print(f"\nBEST BY MRR: {best_label}")
+    misses = [d for d in results[best_label]["details"] if d["rank"] is None or d["rank"] > 3]
+    print("QUESTIONS IT STILL MISSES (right chunk not in the top 3)")
     for d in misses:
-        found = f"rank {d['rank']}" if d["rank"] else "not found in the top 5"
-        print(f"\n  {d['id']}: {d['question']}")
-        print(f"    wanted:    {', '.join(d['expected'])}   ({found})")
-        print(f"    top 3 was: {', '.join(d['retrieved'][:3]) or '(nothing matched)'}")
+        print(f"  {d['id']}: {d['question']}\n    wanted: {', '.join(d['expected'])}"
+              f"   top 3 was: {', '.join(d['retrieved'][:3]) or '(nothing)'}")
     if not misses:
-        print("  none")
-
-    print("\nQUESTIONS THAT STEMMING + STOP WORDS IMPROVED")
-    changes = [(a, b) for a, b in zip(naive_scores["details"], better_scores["details"])
-               if (a["rank"] or 99) != (b["rank"] or 99)]
-    better_ones = [(a, b) for a, b in changes if (b["rank"] or 99) < (a["rank"] or 99)]
-    worse_ones = [(a, b) for a, b in changes if (b["rank"] or 99) > (a["rank"] or 99)]
-    for a, b in better_ones:
-        print(f"  {b['id']}: rank {a['rank'] or 'not found'} -> {b['rank'] or 'not found'}   {b['question']}")
-    if not better_ones:
-        print("  none")
-
-    print("\nQUESTIONS THAT GOT WORSE")
-    for a, b in worse_ones:
-        print(f"  {b['id']}: rank {a['rank'] or 'not found'} -> {b['rank'] or 'not found'}   {b['question']}")
-    if not worse_ones:
         print("  none")
 
 

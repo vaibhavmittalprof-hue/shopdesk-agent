@@ -1,0 +1,552 @@
+{
+  "tag": "policy-only",
+  "model": "claude-haiku-4-5-20251001",
+  "runs_per_case": 3,
+  "summary": {
+    "scored_runs": 24,
+    "passed": 20,
+    "pass_rate": 0.8333333333333334,
+    "ci_low": 0.6414652961213058,
+    "ci_high": 0.9332143199927109,
+    "wrong_actions": 0,
+    "known_issue_runs": 0,
+    "known_issue_passed": 0,
+    "known_issue_wrong_actions": 0,
+    "flaky_cases": [
+      "policy_unanswerable_store_hours"
+    ],
+    "by_category": {
+      "policy": {
+        "passed": 20,
+        "runs": 24
+      }
+    },
+    "avg_steps": 2.1666666666666665,
+    "avg_cost_usd": 0.007064916666666666,
+    "avg_duration_s": 3.231666666666667,
+    "total_cost_usd": 0.169558
+  },
+  "results": [
+    {
+      "case_id": "policy_refund_timing",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5841,
+      "output_tokens": 132,
+      "cost_usd": 0.006501,
+      "duration_s": 5.19,
+      "final_text": "According to our refund policy, approved refunds go back to your original payment method within **5 to 7 business days** (Refund Policy, Refund timing).\n\nIs there a specific order you'd like to request a refund for?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_refund_timing-run1-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_refund_timing",
+      "run": 2,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5840,
+      "output_tokens": 135,
+      "cost_usd": 0.006515,
+      "duration_s": 2.7,
+      "final_text": "According to our refund policy, approved refunds go back to your original payment method within **5 to 7 business days** (Refund Policy, Refund timing).\n\nDo you have a refund you're waiting on, or are you thinking about requesting one?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_refund_timing-run2-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_refund_timing",
+      "run": 3,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5841,
+      "output_tokens": 132,
+      "cost_usd": 0.006501,
+      "duration_s": 2.82,
+      "final_text": "Once a refund is issued and approved, it will reach your account within **5 to 7 business days** back to your original payment method. (Refund Policy, Refund timing)\n\nIs there a specific order you'd like to discuss?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_refund_timing-run3-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_express_shipping_cost",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5738,
+      "output_tokens": 119,
+      "cost_usd": 0.006333,
+      "duration_s": 2.61,
+      "final_text": "Express shipping costs **$15.00** on every order. It typically takes 1 to 2 business days from when your order ships. (Shipping Policy, Shipping costs)\n\nIs there anything else I can help with?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_express_shipping_cost-run1-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_express_shipping_cost",
+      "run": 2,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5738,
+      "output_tokens": 117,
+      "cost_usd": 0.0063230000000000005,
+      "duration_s": 2.61,
+      "final_text": "Express shipping costs **$15.00** on every order. (Shipping Policy, Shipping costs)\n\nIt takes **1 to 2 business days** to deliver with express shipping, starting from when your order ships.",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_express_shipping_cost-run2-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_express_shipping_cost",
+      "run": 3,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5738,
+      "output_tokens": 118,
+      "cost_usd": 0.006328,
+      "duration_s": 2.3,
+      "final_text": "Express shipping costs **$15.00** on every order. It takes 1 to 2 business days for delivery, counted from the day your order ships.\n\n(Shipping Policy, Shipping costs & Delivery times)",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_express_shipping_cost-run3-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_international_shipping",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5735,
+      "output_tokens": 105,
+      "cost_usd": 0.00626,
+      "duration_s": 2.4,
+      "final_text": "Unfortunately, we do not ship internationally. We deliver within the country only. (Shipping Policy, Where we ship)\n\nIs there anything else I can help you with?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_international_shipping-run1-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_international_shipping",
+      "run": 2,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5733,
+      "output_tokens": 103,
+      "cost_usd": 0.006248,
+      "duration_s": 2.51,
+      "final_text": "No, we do not ship internationally. We deliver within the country only. (Shipping Policy, Where we ship)\n\nIs there anything else I can help you with?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_international_shipping-run2-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_international_shipping",
+      "run": 3,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5732,
+      "output_tokens": 101,
+      "cost_usd": 0.0062369999999999995,
+      "duration_s": 2.21,
+      "final_text": "Unfortunately, we do not ship internationally. We deliver within the country only. (Shipping Policy, Where we ship)\n\nIs there anything else I can help with?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_international_shipping-run3-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_warranty_electronics",
+      "run": 1,
+      "passed": false,
+      "wrong_action": false,
+      "failures": [
+        "the answer mentions none of ['12 months', 'one year', '1 year', 'twelve months']"
+      ],
+      "steps": 2,
+      "input_tokens": 5786,
+      "output_tokens": 164,
+      "cost_usd": 0.006606000000000001,
+      "duration_s": 2.91,
+      "final_text": "Electronics are covered by a **12-month warranty from delivery** against manufacturing defects. (Warranty and Defective Items, What is covered)\n\nIf you find a defect within that period, a human agent can review your claim and offer a repair, replacement, or refund\u2014even if the normal refund window has closed. However, the warranty does not cover accidental damage, normal wear and tear, or damage from misuse or unauthorized repairs.",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_warranty_electronics-run1-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_warranty_electronics",
+      "run": 2,
+      "passed": false,
+      "wrong_action": false,
+      "failures": [
+        "the answer mentions none of ['12 months', 'one year', '1 year', 'twelve months']"
+      ],
+      "steps": 2,
+      "input_tokens": 5786,
+      "output_tokens": 162,
+      "cost_usd": 0.006596,
+      "duration_s": 3.02,
+      "final_text": "Electronics are covered by a **12-month warranty from delivery** against manufacturing defects. (Warranty and Defective Items, What is covered)\n\nIf you believe an item has a manufacturing defect, it can be claimed during that 12-month period, even if it's outside the normal refund window. After review, you may receive a repair, replacement, or refund.\n\nIs there a specific electronics item you need help with?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_warranty_electronics-run2-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_warranty_electronics",
+      "run": 3,
+      "passed": false,
+      "wrong_action": false,
+      "failures": [
+        "the answer mentions none of ['12 months', 'one year', '1 year', 'twelve months']"
+      ],
+      "steps": 2,
+      "input_tokens": 5786,
+      "output_tokens": 135,
+      "cost_usd": 0.006461,
+      "duration_s": 3.11,
+      "final_text": "Electronics are covered by a **12-month warranty from delivery** against manufacturing defects. (Warranty and Defective Items, What is covered)\n\nIf you believe an item has a manufacturing defect, you can contact us and a human agent will review your claim and offer a repair, replacement, or refund.",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_warranty_electronics-run3-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_lost_package",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5790,
+      "output_tokens": 157,
+      "cost_usd": 0.006574999999999999,
+      "duration_s": 3.01,
+      "final_text": "According to our policy, if an order has shown \"shipped\" for more than 10 business days without arriving, you should contact support and a human agent will investigate the issue with the carrier. (Shipping Policy, Lost packages)\n\nDo you have an order that hasn't arrived? If so, I can help\u2014just let me know the order number or I can pull up your recent orders.",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_lost_package-run1-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_lost_package",
+      "run": 2,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5784,
+      "output_tokens": 187,
+      "cost_usd": 0.006718999999999999,
+      "duration_s": 3.33,
+      "final_text": "Based on the shop's policy (Shipping Policy, Lost packages): if your order has shown \"shipped\" for more than 10 business days without being delivered, you should contact support and a human agent will investigate the issue with the carrier.\n\nIf your package has been in \"shipped\" status for more than 10 business days, I'd be happy to escalate this to a human agent who can look into it with the carrier. Do you have an order number, or would you like me to look up your recent orders?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_lost_package-run2-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_lost_package",
+      "run": 3,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5784,
+      "output_tokens": 161,
+      "cost_usd": 0.006588999999999999,
+      "duration_s": 3.14,
+      "final_text": "If your package has been marked as \"shipped\" for more than 10 business days without arriving, you should contact us and we'll investigate the issue with the carrier. (Shipping Policy, Lost packages)\n\nDo you have an order number? If so, I can look it up and see the current status. Or if you'd like, I can hand you to a human agent who can investigate further.",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_lost_package-run3-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_exception_request",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 4,
+      "input_tokens": 11873,
+      "output_tokens": 355,
+      "cost_usd": 0.013648,
+      "duration_s": 7.3,
+      "final_text": "Done! A human agent will review your request and follow up with you soon. Thank you for your patience!",
+      "tools": [
+        "check_refund_eligibility",
+        "escalate_to_human"
+      ],
+      "new_refunds": [],
+      "tickets": [
+        "[OTHER] Customer #3 is requesting an exception to the refund policy for order 1002. The order was delivered 20 days ago, which is 6 days past the 14-day refund window, so it is currently ineligible for refund. Customer has explicitly asked for an exception and is willing to have a human agent review the request."
+      ],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_exception_request-run1-turn1.jsonl",
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_exception_request-run1-turn2.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_exception_request",
+      "run": 2,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 3,
+      "input_tokens": 8483,
+      "output_tokens": 220,
+      "cost_usd": 0.009583,
+      "duration_s": 4.35,
+      "final_text": "Done! A human agent will review your request and follow up with you. Thanks for your patience!",
+      "tools": [
+        "escalate_to_human"
+      ],
+      "new_refunds": [],
+      "tickets": [
+        "[OTHER] Customer #3 is requesting an exception to the refund policy for order 1002, which is past the refund window. They are asking for a refund despite the order being outside the standard refund eligibility period."
+      ],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_exception_request-run2-turn1.jsonl",
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_exception_request-run2-turn2.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_exception_request",
+      "run": 3,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 4,
+      "input_tokens": 11843,
+      "output_tokens": 334,
+      "cost_usd": 0.013513,
+      "duration_s": 6.48,
+      "final_text": "Done! I've created a support ticket for your request. A human agent will review your case and follow up with you.",
+      "tools": [
+        "check_refund_eligibility",
+        "escalate_to_human"
+      ],
+      "new_refunds": [],
+      "tickets": [
+        "[OTHER] Customer #3 is requesting a refund exception for order 1002. The order was delivered 20 days ago, which is past the 14-day refund window, making it ineligible under standard policy. Customer is asking for an exception to be made."
+      ],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_exception_request-run3-turn1.jsonl",
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_exception_request-run3-turn2.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_unanswerable_gift_wrap",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5950,
+      "output_tokens": 127,
+      "cost_usd": 0.006585,
+      "duration_s": 2.9,
+      "final_text": "I don't have information about gift wrapping in our policies. For details about gift wrapping options and services, I'd be happy to hand you to a human agent who can help. Would you like me to do that?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_unanswerable_gift_wrap-run1-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_unanswerable_gift_wrap",
+      "run": 2,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5950,
+      "output_tokens": 130,
+      "cost_usd": 0.0066,
+      "duration_s": 2.74,
+      "final_text": "I don't have information about gift wrapping services in our policies. For details about gift wrapping options, I'd recommend reaching out to a human agent who can help you with that question. Would you like me to connect you with someone?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_unanswerable_gift_wrap-run2-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_unanswerable_gift_wrap",
+      "run": 3,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5957,
+      "output_tokens": 131,
+      "cost_usd": 0.006612,
+      "duration_s": 2.82,
+      "final_text": "I don't have that information in our policies. For questions about gift wrapping options, I'd recommend reaching out to a human agent who can help you directly. Would you like me to connect you with someone?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_unanswerable_gift_wrap-run3-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_unanswerable_store_hours",
+      "run": 1,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5779,
+      "output_tokens": 134,
+      "cost_usd": 0.006449,
+      "duration_s": 2.5,
+      "final_text": "I don't have that information available. The search didn't return anything about store opening hours. \n\nIs there anything else I can help you with, such as questions about orders, refunds, shipping, or our policies?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_unanswerable_store_hours-run1-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_unanswerable_store_hours",
+      "run": 2,
+      "passed": false,
+      "wrong_action": false,
+      "failures": [
+        "never called search_policy"
+      ],
+      "steps": 1,
+      "input_tokens": 2693,
+      "output_tokens": 93,
+      "cost_usd": 0.003158,
+      "duration_s": 1.59,
+      "final_text": "I don't have information about store opening hours in my available resources. My tools are designed to help with orders, refunds, and our policies on those topics.\n\nFor store opening hours, I'd recommend:\n- Checking the shop's website or contact page\n- Sending an email to customer support\n- Looking for a phone number to call directly\n\nIs there anything else I can help you with regarding your orders or refunds?",
+      "tools": [],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_unanswerable_store_hours-run2-turn1.jsonl"
+      ]
+    },
+    {
+      "case_id": "policy_unanswerable_store_hours",
+      "run": 3,
+      "passed": true,
+      "wrong_action": false,
+      "failures": [],
+      "steps": 2,
+      "input_tokens": 5778,
+      "output_tokens": 168,
+      "cost_usd": 0.006618,
+      "duration_s": 3.01,
+      "final_text": "I don't have that information available. The policies I can access cover refunds, shipping, and other customer support topics, but not store hours. \n\nFor store opening hours, I'd recommend:\n- Checking our website's main page or \"Contact Us\" section\n- Looking for a phone number to call our support team directly\n\nIs there anything else I can help you with today?",
+      "tools": [
+        "search_policy"
+      ],
+      "new_refunds": [],
+      "tickets": [],
+      "traces": [
+        "C:\\Users\\vaibh\\Documents\\shopdesk-agent\\traces\\evals\\20261013-192820-policy-only\\policy_unanswerable_store_hours-run3-turn1.jsonl"
+      ]
+    }
+  ]
+}

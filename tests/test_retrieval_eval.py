@@ -58,3 +58,15 @@ def test_the_search_does_not_get_worse():
     scores = evaluate(index.search, load_questions())
     assert scores["recall"][5] >= 0.90, scores["recall"]
     assert scores["mrr"] >= 0.80, scores["mrr"]
+
+
+def test_the_report_compares_every_search_it_is_given(monkeypatch, capsys):
+    from evals import run_retrieval_eval
+    from tests.test_dense_hybrid import ConceptEmbedder
+    monkeypatch.setattr(run_retrieval_eval, "make_embedder", lambda spec: ConceptEmbedder())
+    monkeypatch.setattr("sys.argv", ["run_retrieval_eval", "--embedder", "fake"])
+    run_retrieval_eval.main()
+    out = capsys.readouterr().out
+    assert "BM25, stemming + stop words" in out
+    assert "Meaning search: concepts" in out and "Hybrid: BM25 + concepts" in out
+    assert "RANK OF THE RIGHT CHUNK" in out and "BEST BY MRR" in out

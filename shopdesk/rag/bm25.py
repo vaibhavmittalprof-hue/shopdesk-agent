@@ -49,6 +49,7 @@ class BM25Index:
     def __init__(self, chunks, k1: float = 1.5, b: float = 0.75, stem: bool = True,
                  drop_stopwords: bool = True):
         self.chunks = list(chunks)
+        self.name = "bm25"
         self.k1, self.b = k1, b
         self.stem, self.drop_stopwords = stem, drop_stopwords
 

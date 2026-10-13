@@ -2,12 +2,11 @@ from functools import lru_cache
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from shopdesk.rag.bm25 import BM25Index
-from shopdesk.rag.chunking import load_policy_chunks
+from shopdesk.rag.factory import build_policy_index
 from shopdesk.tools.common import ok, parse_args
 
 NOTE_FOUND = (
-    "These are the closest policy passages by keyword. Answer ONLY from them, and only if they "
+    "These are the closest policy passages found. Answer ONLY from them, and only if they "
     "directly answer the question; otherwise say you do not have that information. "
     "Cite the source as given in cite_as."
 )
@@ -41,9 +40,9 @@ SEARCH_POLICY_SPEC = {
 
 
 @lru_cache(maxsize=1)
-def _default_index() -> BM25Index:
-    """Build the search index once and reuse it."""
-    return BM25Index(load_policy_chunks())
+def _default_index():
+    """Build the search index once and reuse it. Which search it is depends on POLICY_SEARCH."""
+    return build_policy_index()
 
 
 def search_policy(raw_args: dict, conn=None, index=None) -> dict:
@@ -51,7 +50,8 @@ def search_policy(raw_args: dict, conn=None, index=None) -> dict:
     if error:
         return error
 
-    results = (index or _default_index()).search(args.query, k=args.max_results)
+    index = index or _default_index()
+    results = index.search(args.query, k=args.max_results)
     passages = [
         {
             "cite_as": f"{r.chunk.doc_title}, {r.chunk.section}",
@@ -62,6 +62,7 @@ def search_policy(raw_args: dict, conn=None, index=None) -> dict:
     ]
     return ok({
         "found": bool(passages),
+        "retriever": getattr(index, "name", "unknown"),
         "note": NOTE_FOUND if passages else NOTE_NOT_FOUND,
         "passages": passages,
     })

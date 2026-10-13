@@ -21,3 +21,9 @@
 {"id": "q21", "question": "How long will a refund take to reach my account?", "expected": ["refund#refund-timing"]}
 {"id": "q22", "question": "How long is the warranty on electronics?", "expected": ["warranty#what-is-covered"]}
 {"id": "q23", "question": "What happens if my package never arrives?", "expected": ["shipping#lost-packages"]}
+{"id": "q24", "question": "What does REFUND_NEEDS_APPROVAL mean?", "expected": ["escalation#ticket-reasons"]}
+{"id": "q25", "question": "Is there a $200.00 limit on refunds?", "expected": ["refund#approval", "escalation#when-the-assistant-must-hand-over"]}
+{"id": "q26", "question": "Why does the policy mention 20,000 cents?", "expected": ["refund#approval"]}
+{"id": "q27", "question": "When is the ticket reason OTHER used?", "expected": ["escalation#ticket-reasons"]}
+{"id": "q28", "question": "Is the VIP window 21 days?", "expected": ["refund#refund-windows"]}
+{"id": "q29", "question": "Does CUSTOMER_REQUEST apply when I ask for a human?", "expected": ["escalation#ticket-reasons", "escalation#when-the-assistant-must-hand-over"]}

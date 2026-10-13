@@ -8,9 +8,10 @@ from shopdesk.policy import APPROVAL_LIMIT_CENTS
 from shopdesk.tools.refunds import check_refund_eligibility
 from shopdesk.tools.registry import TOOLS
 
+
 ALLOWED_KEYS = {"id", "category", "customer_id", "turns", "refunds", "ticket", "ticket_reason",
                 "must_call", "must_not_call", "answer_contains_any", "answer_must_not_contain",
-                "known_issue"}
+                "known_issue", "answer_contains_all", "ticket_must_not_have_reason"}
 CASES = load_cases()
 
 

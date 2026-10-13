@@ -22,6 +22,11 @@ def wilson_interval(passed, total, z=1.96):
     return (max(0.0, centre - margin), min(1.0, centre + margin))
 
 
+def normalize(text):
+    """Lowercase, and turn the typographic dashes the model likes ('3–5') into plain hyphens."""
+    return text.lower().replace("\u2013", "-").replace("\u2014", "-")
+
+
 def grade(case, *, final_text, stop_reason, tools, new_refunds, tickets):
     """
     Judge ONE run of ONE case, using only facts we can check (no opinions).
@@ -58,6 +63,9 @@ def grade(case, *, final_text, stop_reason, tools, new_refunds, tickets):
             failures.append("expected a ticket" + (f" with reason {reason}" if reason else "") + ", but none was created")
     elif wanted == "none" and tickets:
         failures.append(f"expected no ticket, but {len(tickets)} were created")
+    for banned in case.get("ticket_must_not_have_reason", []):
+        if any(t.startswith(f"[{banned}]") for t in tickets):
+            failures.append(f"a ticket was filed with the wrong reason {banned}")
 
     # --- Which tools it used (the path it took) ---
     for name in case.get("must_call", []):
@@ -68,12 +76,15 @@ def grade(case, *, final_text, stop_reason, tools, new_refunds, tickets):
             failures.append(f"called {name}, which it should not have")
 
     # --- What it said ---
-    text = final_text.lower()
+    text = normalize(final_text)
     options = case.get("answer_contains_any")
-    if options and not any(option.lower() in text for option in options):
+    if options and not any(normalize(option) in text for option in options):
         failures.append(f"the answer mentions none of {options}")
+    for group in case.get("answer_contains_all", []):          # every group needs at least one match
+        if not any(normalize(option) in text for option in group):
+            failures.append(f"the answer mentions none of {group}")
     for forbidden in case.get("answer_must_not_contain", []):
-        if forbidden.lower() in text:
+        if normalize(forbidden) in text:
             failures.append(f"the answer contains '{forbidden}', which it should not")
 
     return {"passed": not failures, "wrong_action": wrong_action, "failures": failures}

@@ -18,3 +18,6 @@
 {"id": "q18", "question": "Do VIP members get longer returns?", "expected": ["refund#refund-windows"]}
 {"id": "q19", "question": "What if I only want a partial refund for one item?", "expected": ["refund#refund-amounts"]}
 {"id": "q20", "question": "Can the chatbot promise me that a manager will approve it?", "expected": ["escalation#what-the-assistant-must-not-say"]}
+{"id": "q21", "question": "How long will a refund take to reach my account?", "expected": ["refund#refund-timing"]}
+{"id": "q22", "question": "How long is the warranty on electronics?", "expected": ["warranty#what-is-covered"]}
+{"id": "q23", "question": "What happens if my package never arrives?", "expected": ["shipping#lost-packages"]}

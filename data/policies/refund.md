@@ -35,7 +35,7 @@ If a customer says an item arrived defective or damaged, the automated agent doe
 decide the claim. It should escalate to a human, whatever the refund window says.
 
 ## Refund timing
-Approved refunds go back to the original payment method within 5 to 7 business days.
+How long does a refund take? Approved refunds go back to the original payment method within 5 to 7 business days.
 The assistant states this timing only for refunds that have actually been issued.
 
 ## Exceptions

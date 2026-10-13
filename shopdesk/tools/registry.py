@@ -1,4 +1,5 @@
 from shopdesk.tools.common import err
+from shopdesk.tools.policy import SEARCH_POLICY_SPEC, search_policy
 from shopdesk.tools.orders import (
     GET_ORDER_SPEC,
     LIST_CUSTOMER_ORDERS_SPEC,
@@ -20,6 +21,7 @@ TOOLS = {
     "check_refund_eligibility": (check_refund_eligibility, CHECK_REFUND_ELIGIBILITY_SPEC),
     "issue_refund": (issue_refund, ISSUE_REFUND_SPEC),
     "escalate_to_human": (escalate_to_human, ESCALATE_TO_HUMAN_SPEC),
+    "search_policy": (search_policy, SEARCH_POLICY_SPEC),
 }
 
 # The "menu" sent to the model on every call

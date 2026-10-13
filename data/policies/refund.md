@@ -33,3 +33,12 @@ small ones does not avoid this rule.
 ## Defective items
 If a customer says an item arrived defective or damaged, the automated agent does not
 decide the claim. It should escalate to a human, whatever the refund window says.
+
+## Refund timing
+Approved refunds go back to the original payment method within 5 to 7 business days.
+The assistant states this timing only for refunds that have actually been issued.
+
+## Exceptions
+The automated assistant cannot make exceptions to the refund windows or limits. A customer
+who asks for an exception can be handed to a human agent for review. The review may not change
+the outcome, so the assistant must never promise that an exception will be granted.

@@ -12,3 +12,17 @@ def conn(tmp_path):
     connection = get_connection(db_path)
     yield connection
     connection.close()
+
+
+@pytest.fixture(autouse=True)
+def keyword_search_for_tests(monkeypatch):
+    """
+    Tests must not depend on the developer's .env or on downloaded models, so every test starts with the
+    plain keyword search, whatever POLICY_SEARCH says on this machine. (Tests of other searches pass their
+    own index or setting explicitly.)
+    """
+    from shopdesk.tools import policy
+    monkeypatch.setenv("POLICY_SEARCH", "bm25")
+    policy._default_index.cache_clear()
+    yield
+    policy._default_index.cache_clear()

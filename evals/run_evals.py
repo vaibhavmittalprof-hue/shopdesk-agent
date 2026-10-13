@@ -23,6 +23,11 @@ from shopdesk.tracing import TRACE_DIR, Tracer
 CASES_PATH = Path(__file__).parent / "cases.jsonl"
 RESULTS_DIR = Path(__file__).parent / "results"
 
+def retriever_name():
+    """Which policy search the agent really used (after any fallback), e.g. 'bm25' or 'hybrid:BAAI/bge-small-en-v1.5'."""
+    from shopdesk.tools import policy
+    return policy._default_index().name
+
 
 def load_cases(path=CASES_PATH):
     lines = Path(path).read_text(encoding="utf-8").splitlines()
@@ -115,7 +120,7 @@ def summarize(cases, results):
 
 def print_report(cases, results, summary, tag, runs):
     by_id = {c["id"]: c for c in cases}
-    print(f"\nEVAL '{tag}': {len(cases)} cases x {runs} runs, model {MODEL}\n")
+    print(f"\nEVAL '{tag}': {len(cases)} cases x {runs} runs, model {MODEL}, policy search: {retriever_name()}\n")
 
     print(f"{'case':<38}{'runs':<14}result")
     for case in cases:
@@ -154,6 +159,7 @@ def print_report(cases, results, summary, tag, runs):
 def main():
     parser = argparse.ArgumentParser(description="Evaluate the ShopDesk agent.")
     parser.add_argument("--runs", type=int, default=3, help="runs per case (default 3)")
+    parser.add_argument("--policy_search", default=retriever_name(), help="policy search method (default: auto-detect)")
     parser.add_argument("--case", help="only cases whose id contains this text")
     parser.add_argument("--tag", default="baseline", help="a label for this evaluation")
     args = parser.parse_args()

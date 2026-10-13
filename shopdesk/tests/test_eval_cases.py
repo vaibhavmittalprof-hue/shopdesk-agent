@@ -102,6 +102,14 @@ def test_the_unanswerable_cases_really_are_unanswerable():
 
 
 def test_the_policy_cases_require_a_search_first():
+    # Exceptions: an exception request is about behaviour, and "store hours" is plainly outside the policy
+    # documents, so declining correctly without searching is acceptable. The no-invention checks still apply.
+    exempt = {"policy_exception_request", "policy_unanswerable_store_hours"}
     for case in CASES:
-        if case["category"] == "policy" and not case["id"].startswith("policy_exception"):
+        if case["category"] == "policy" and case["id"] not in exempt:
             assert "search_policy" in case.get("must_call", []), case["id"]
+
+
+def test_the_out_of_domain_case_still_forbids_invented_answers():
+    case = next(c for c in CASES if c["id"] == "policy_unanswerable_store_hours")
+    assert case["answer_must_not_contain"] and case["answer_contains_any"]

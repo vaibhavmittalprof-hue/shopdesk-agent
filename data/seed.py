@@ -1,11 +1,11 @@
 import random
 from datetime import datetime, timedelta
 from pathlib import Path
-
+from shopdesk.clock import SHOP_NOW
 from shopdesk.db import DB_PATH, get_connection, init_db
 
 # A FIXED "today", so the data (and later your tests and evals) never change.
-REFERENCE_NOW = datetime(2026, 10, 1, 12, 0, 0)
+REFERENCE_NOW = SHOP_NOW
 
 FIRST_NAMES = ["Asha", "Ben", "Chen", "Dina", "Eli", "Farah", "Gus", "Hana",
                "Ivan", "Jia", "Kofi", "Lena", "Mateo", "Nia", "Omar"]

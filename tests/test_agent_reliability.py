@@ -54,7 +54,7 @@ def test_trace_records_the_whole_run(monkeypatch, conn, tmp_path):
         reply([text_block("Order 1001 was delivered.")], "end_turn"),
     ])
     tracer = Tracer(run_id="r1", directory=tmp_path)
-    result = loop.run_agent("Where is order 1001?", conn=conn, tracer=tracer)
+    result = loop.run_agent("Where is order 1001?", customer_id=2, conn=conn, tracer=tracer)
 
     events = [e["event"] for e in read_trace(tracer)]
     assert events == ["run_start", "model_call", "tool_call", "model_call", "run_end"]
@@ -74,7 +74,7 @@ def test_tokens_and_cost_are_added_up(monkeypatch, conn):
         reply([tool_block("t1", "get_order", {"order_id": 1001})], "tool_use", in_tok=1000, out_tok=100),
         reply([text_block("Done.")], "end_turn", in_tok=1500, out_tok=50),
     ])
-    result = loop.run_agent("Where is order 1001?", conn=conn)
+    result = loop.run_agent("Where is order 1001?", customer_id=2, conn=conn)
     assert result.input_tokens == 2500 and result.output_tokens == 150
     # (2500 * $1 + 150 * $5) / 1,000,000
     assert round(result.cost_usd, 6) == 0.00325
@@ -84,7 +84,7 @@ def test_unknown_model_price_does_not_break_the_run(monkeypatch, conn):
     odd = reply([text_block("Hi.")], "end_turn")
     odd.model = "some-future-model"
     fake_model(monkeypatch, [odd])
-    result = loop.run_agent("Hi", conn=conn)
+    result = loop.run_agent("Hi", customer_id=2, conn=conn)
     assert result.stop_reason == "end_turn" and result.cost_usd == 0.0
 
 
@@ -92,7 +92,7 @@ def test_runs_without_a_tracer_leave_no_files(monkeypatch, conn, tmp_path):
     from shopdesk import tracing
     monkeypatch.setattr(tracing, "TRACE_DIR", tmp_path / "traces")
     fake_model(monkeypatch, [reply([text_block("Hi.")], "end_turn")])
-    result = loop.run_agent("Hi", conn=conn)
+    result = loop.run_agent("Hi", customer_id=2, conn=conn)
     assert result.trace_path == ""
     assert not (tmp_path / "traces").exists()
 
@@ -105,7 +105,7 @@ def test_a_failing_model_gives_a_polite_result_not_a_crash(monkeypatch, conn, tm
 
     monkeypatch.setattr(loop, "chat", always_fails)
     tracer = Tracer(run_id="r2", directory=tmp_path)
-    result = loop.run_agent("Hello", conn=conn, tracer=tracer)
+    result = loop.run_agent("Hello", customer_id=2, conn=conn, tracer=tracer)
 
     assert result.stop_reason == "model_error"
     assert "human agent" in result.text
@@ -120,7 +120,7 @@ def test_retries_are_recorded_in_the_trace(monkeypatch, conn, tmp_path):
 
     monkeypatch.setattr(loop, "chat", flaky)
     tracer = Tracer(run_id="r3", directory=tmp_path)
-    loop.run_agent("Hi", conn=conn, tracer=tracer)
+    loop.run_agent("Hi", customer_id=2, conn=conn, tracer=tracer)
 
     trace = read_trace(tracer)
     retry = [e for e in trace if e["event"] == "retry"][0]
@@ -135,7 +135,7 @@ def test_a_stuck_model_is_warned_once_then_stopped(monkeypatch, conn, tmp_path):
     state = fake_model(monkeypatch, [same_call() for _ in range(10)])
     tracer = Tracer(run_id="r4", directory=tmp_path)
 
-    result = loop.run_agent("Loop", conn=conn, tracer=tracer)
+    result = loop.run_agent("Loop", customer_id=2, conn=conn, tracer=tracer)
 
     assert result.stop_reason == "repeated_calls"
     assert state["calls"] == 4                       # run, run, blocked (warned), blocked (stopped)
@@ -150,7 +150,7 @@ def test_a_model_that_listens_to_the_warning_can_finish(monkeypatch, conn, tmp_p
     same_call = lambda: reply([tool_block("t", "get_order", {"order_id": 1001})], "tool_use")
     fake_model(monkeypatch, [same_call(), same_call(), same_call(),
                              reply([text_block("Order 1001 was delivered.")], "end_turn")])
-    result = loop.run_agent("Where is 1001?", conn=conn, tracer=Tracer(run_id="r5", directory=tmp_path))
+    result = loop.run_agent("Where is 1001?", customer_id=2, conn=conn, tracer=Tracer(run_id="r5", directory=tmp_path))
     assert result.stop_reason == "end_turn"
     assert conversation_is_valid(result.messages)
 
@@ -158,7 +158,7 @@ def test_a_model_that_listens_to_the_warning_can_finish(monkeypatch, conn, tmp_p
 def test_different_arguments_are_not_repeats(monkeypatch, conn):
     calls = [reply([tool_block(f"t{i}", "get_order", {"order_id": 1001 + i})], "tool_use") for i in range(5)]
     fake_model(monkeypatch, calls + [reply([text_block("Checked five orders.")], "end_turn")])
-    result = loop.run_agent("Check some orders", conn=conn, max_steps=8)
+    result = loop.run_agent("Check some orders", customer_id=2, conn=conn, max_steps=8)
     assert result.stop_reason == "end_turn"
 
 
@@ -171,7 +171,7 @@ def test_argument_order_does_not_hide_a_repeat(monkeypatch, conn):
         reply([tool_block("c", "escalate_to_human", args_a)], "tool_use"),       # 3rd identical
         reply([text_block("Done.")], "end_turn"),
     ])
-    result = loop.run_agent("Help", conn=conn)
+    result = loop.run_agent("Help", customer_id=2, conn=conn)
     tickets = conn.execute("SELECT COUNT(*) FROM tickets").fetchone()[0]
     assert tickets == 2                              # the 3rd was blocked, not executed
 
@@ -184,7 +184,7 @@ def test_a_run_over_budget_is_stopped_with_a_valid_conversation(monkeypatch, con
     state = fake_model(monkeypatch, [expensive, reply([text_block("never reached")], "end_turn")])
     tracer = Tracer(run_id="r6", directory=tmp_path)
 
-    result = loop.run_agent("Costly", conn=conn, tracer=tracer, max_cost_usd=0.10)
+    result = loop.run_agent("Costly", customer_id=2, conn=conn, tracer=tracer, max_cost_usd=0.10)
 
     assert result.stop_reason == "budget_exceeded"
     assert state["calls"] == 1                       # it did not make the second, extra call

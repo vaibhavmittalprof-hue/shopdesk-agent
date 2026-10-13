@@ -1,3 +1,4 @@
+from shopdesk.tools.common import Session
 from shopdesk.tools.orders import get_order, list_customer_orders
 
 
@@ -43,7 +44,7 @@ def test_get_order_rejects_bad_input_without_raising(conn):
 # ---------- list_customer_orders ----------
 
 def test_list_customer_orders_newest_first(conn):
-    result = list_customer_orders({"customer_id": 2, "limit": 20}, conn=conn)
+    result = list_customer_orders({"limit": 20}, conn=conn, session=Session(2))
     assert result["ok"] is True
     orders = result["data"]["orders"]
     assert 1001 in [o["order_id"] for o in orders]
@@ -52,33 +53,27 @@ def test_list_customer_orders_newest_first(conn):
 
 
 def test_list_customer_orders_respects_limit(conn):
-    orders = list_customer_orders({"customer_id": 2, "limit": 1}, conn=conn)["data"]["orders"]
+    orders = list_customer_orders({"limit": 1}, conn=conn, session=Session(2))["data"]["orders"]
     assert len(orders) == 1
 
 
 def test_list_customer_orders_default_limit(conn):
-    orders = list_customer_orders({"customer_id": 2}, conn=conn)["data"]["orders"]
+    orders = list_customer_orders({}, conn=conn, session=Session(2))["data"]["orders"]
     assert len(orders) <= 5
 
 
-def test_list_customer_orders_unknown_customer(conn):
-    result = list_customer_orders({"customer_id": 9999}, conn=conn)
-    assert result["ok"] is False
-    assert result["error"]["code"] == "CUSTOMER_NOT_FOUND"
-
-
-def test_list_customer_orders_customer_with_no_orders(conn):
+def test_list_customer_orders_for_a_signed_in_customer_with_no_orders(conn):
     conn.execute(
         "INSERT INTO customers (id, name, email, tier) VALUES (99, 'No Orders', 'no@example.com', 'standard')"
     )
     conn.commit()
-    result = list_customer_orders({"customer_id": 99}, conn=conn)
+    result = list_customer_orders({}, conn=conn, session=Session(99))
     assert result["ok"] is True
     assert result["data"]["orders"] == []
 
 
 def test_list_customer_orders_rejects_bad_limits(conn):
     for bad_limit in [0, 21, -1, "many"]:
-        result = list_customer_orders({"customer_id": 2, "limit": bad_limit}, conn=conn)
+        result = list_customer_orders({"limit": bad_limit}, conn=conn, session=Session(2))
         assert result["ok"] is False, bad_limit
         assert result["error"]["code"] == "INVALID_INPUT"

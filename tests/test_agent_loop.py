@@ -40,7 +40,7 @@ def use_fake(monkeypatch, replies):
 
 def test_direct_answer_without_tools(monkeypatch, conn):
     use_fake(monkeypatch, [reply([text_block("Hello! How can I help?")], "end_turn")])
-    result = loop.run_agent("Hi", conn=conn)
+    result = loop.run_agent("Hi", customer_id=2, conn=conn)
     assert result.text == "Hello! How can I help?"
     assert result.steps == 1
     assert result.stop_reason == "end_turn"
@@ -51,7 +51,7 @@ def test_tool_call_then_final_answer(monkeypatch, conn):
         reply([tool_block("toolu_1", "get_order", {"order_id": 1001})], "tool_use"),
         reply([text_block("Order 1001 was delivered.")], "end_turn"),
     ])
-    result = loop.run_agent("Where is order 1001?", conn=conn)
+    result = loop.run_agent("Where is order 1001?", customer_id=2, conn=conn)
 
     assert result.text == "Order 1001 was delivered."
     assert result.steps == 2
@@ -72,7 +72,7 @@ def test_tool_error_is_sent_back_and_marked_as_error(monkeypatch, conn):
         reply([tool_block("toolu_1", "get_order", {"order_id": 9999})], "tool_use"),
         reply([text_block("I couldn't find that order.")], "end_turn"),
     ])
-    result = loop.run_agent("Where is order 9999?", conn=conn)
+    result = loop.run_agent("Where is order 9999?", customer_id=2, conn=conn)
 
     tool_result = result.messages[2]["content"][0]
     assert tool_result["is_error"] is True
@@ -85,7 +85,7 @@ def test_unknown_tool_does_not_crash_the_loop(monkeypatch, conn):
         reply([tool_block("toolu_1", "delete_everything", {})], "tool_use"),
         reply([text_block("Sorry, I can't do that.")], "end_turn"),
     ])
-    result = loop.run_agent("Delete everything", conn=conn)
+    result = loop.run_agent("Delete everything", customer_id=2, conn=conn)
 
     tool_result = result.messages[2]["content"][0]
     assert tool_result["is_error"] is True
@@ -100,7 +100,7 @@ def test_two_tool_calls_in_one_reply_get_one_result_message(monkeypatch, conn):
         ], "tool_use"),
         reply([text_block("Both delivered.")], "end_turn"),
     ])
-    result = loop.run_agent("Check 1001 and 1002", conn=conn)
+    result = loop.run_agent("Check 1001 and 1002", customer_id=2, conn=conn)
 
     results_message = result.messages[2]
     assert results_message["role"] == "user"
@@ -115,7 +115,7 @@ def test_step_cap_stops_a_runaway_loop(monkeypatch, conn):
     always_wants_a_tool.calls = 0
     monkeypatch.setattr(loop, "chat", always_wants_a_tool)
 
-    result = loop.run_agent("Loop forever", max_steps=3, conn=conn)
+    result = loop.run_agent("Loop forever", max_steps=3, customer_id=2, conn=conn)
 
     assert result.stop_reason == "max_steps"
     assert result.steps == 3
@@ -127,8 +127,8 @@ def test_history_is_carried_into_the_next_turn(monkeypatch, conn):
         reply([text_block("First answer.")], "end_turn"),
         reply([text_block("Second answer.")], "end_turn"),
     ])
-    first = loop.run_agent("First question", conn=conn)
-    second = loop.run_agent("Second question", history=first.messages, conn=conn)
+    first = loop.run_agent("First question", customer_id=2, conn=conn)
+    second = loop.run_agent("Second question", history=first.messages, customer_id=2, conn=conn)
 
     roles = [m["role"] for m in second.messages]
     assert roles == ["user", "assistant", "user", "assistant"]

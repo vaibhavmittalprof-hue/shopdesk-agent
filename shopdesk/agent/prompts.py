@@ -45,5 +45,10 @@ def build_system_prompt(customer_id=None) -> str:
         "- Keep answers short and friendly.",
     ]
     if customer_id is not None:
-        lines += ["", f"You are speaking with customer #{customer_id}."]
+        lines += ["", "The customer is already signed in. Your tools can only see THIS customer's own orders and "
+                      "tickets, and you never need to ask for or pass a customer id. If an order is not found, say so "
+                      "plainly; never guess, and never say anything about other customers."]
+    else:
+        lines += ["", "No customer is signed in, so you cannot look up orders or create tickets. You can still answer "
+                      "policy questions."]
     return "\n".join(lines)

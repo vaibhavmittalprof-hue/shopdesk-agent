@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from shopdesk.agent.prompts import build_system_prompt
 from shopdesk.llm import MODEL, chat
 from shopdesk.pricing import estimate_cost
-from shopdesk.tools.common import err
+from shopdesk.tools.common import Session, err
 from shopdesk.tools.registry import TOOL_SPECS, run_tool
 from shopdesk.tracing import Tracer, block_to_dict
 
@@ -38,6 +38,7 @@ def run_agent(user_message, history=None, customer_id=None, max_steps=MAX_STEPS,
     messages = list(history or [])
     messages.append({"role": "user", "content": user_message})
     system = build_system_prompt(customer_id)
+    session = Session(customer_id) if customer_id is not None else None     # set by OUR code, never by the model
 
     run_started = time.time()
     total_in = total_out = 0
@@ -134,7 +135,7 @@ def run_agent(user_message, history=None, customer_id=None, max_steps=MAX_STEPS,
                 if blocked_calls >= 2:      # told once, and it still repeats: give up
                     stop_run = True
             else:
-                result = run_tool(block.name, block.input, conn=conn)
+                result = run_tool(block.name, block.input, conn=conn, session=session)
 
             tracer.event("tool_call", step=step, tool_use_id=block.id, name=block.name,
                          args=block.input, result=result, ok=result["ok"],

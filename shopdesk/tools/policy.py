@@ -45,7 +45,7 @@ def _default_index():
     return build_policy_index()
 
 
-def search_policy(raw_args: dict, conn=None, index=None) -> dict:
+def search_policy(raw_args: dict, conn=None, index=None, session=None) -> dict:
     args, error = parse_args(SearchPolicyArgs, raw_args)
     if error:
         return error

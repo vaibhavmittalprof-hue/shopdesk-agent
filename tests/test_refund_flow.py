@@ -19,7 +19,7 @@ def test_agent_refunds_through_the_loop_and_a_retry_is_safe(monkeypatch, conn):
                                                  "reason": "Wrong size", "idempotency_key": key})], "tool_use"),
         reply([text_block("Your $50.00 refund has been issued.")], "end_turn"),
     ])
-    result = loop.run_agent("Please refund order 1001", conn=conn)
+    result = loop.run_agent("Please refund order 1001", customer_id=2, conn=conn)
 
     assert result.stop_reason == "end_turn"
     assert tool_json(result.messages[2])["data"]["eligible"] is True
@@ -37,7 +37,7 @@ def test_over_limit_refund_is_refused_and_agent_escalates(monkeypatch, conn):
                                                       "summary": "Customer wants $2,500 refunded on order 1010."})], "tool_use"),
         reply([text_block("A human agent will follow up.")], "end_turn"),
     ])
-    result = loop.run_agent("Refund my laptop, order 1010", conn=conn)
+    result = loop.run_agent("Refund my laptop, order 1010", customer_id=1, conn=conn)
 
     refused = result.messages[2]["content"][0]
     assert refused["is_error"] is True

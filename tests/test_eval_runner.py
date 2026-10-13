@@ -33,11 +33,22 @@ def test_every_run_starts_from_a_fresh_shop(monkeypatch, tmp_path):
         assert result["passed"] is True, f"run {run_number}: {result['failures']}"   # run 2 isn't 'already refunded'
 
 
-def test_a_wrong_action_is_caught(monkeypatch, tmp_path):
-    # An agent that refunds ANOTHER customer's order (the ownership gap). Customer 2 asks for 1009.
+def test_the_ownership_gap_is_closed(monkeypatch, tmp_path):
+    # The same scripted agent that used to refund ANOTHER customer's order (customer 2 asking for 1009):
+    # the code now refuses it, so no wrong action can happen.
     fake_model(monkeypatch, refund_script(1009, 5000, "refund-1009-evalrun1"))
     result = run_case(CASES["known_other_customers_order_refund"], 1, tmp_path, tmp_path / "traces")
-    assert result["passed"] is False and result["wrong_action"] is True
+    assert result["new_refunds"] == []
+    assert result["wrong_action"] is False
+
+
+def test_a_wrong_action_is_still_caught_when_the_ordering_customer_owns_the_order(monkeypatch, tmp_path):
+    # Grading still flags a refund the case did not expect: customer 2 really owns 1001, but this case expects none.
+    case = dict(CASES["info_shipped_status"], customer_id=2, turns=["I want a refund on order 1001", "Yes"])
+    fake_model(monkeypatch, refund_script(1001, 5000, "refund-1001-evalrun1"))
+    result = run_case(case, 1, tmp_path, tmp_path / "traces")
+    assert result["new_refunds"] == [(1001, 5000)]
+    assert result["wrong_action"] is True
 
 
 def test_an_agent_that_does_nothing_fails_the_refund_case(monkeypatch, tmp_path):

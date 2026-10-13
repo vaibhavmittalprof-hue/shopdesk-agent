@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from shopdesk.clock import current_time
 from shopdesk.policy import APPROVAL_LIMIT_CENTS, window_days
-from shopdesk.tools.common import err, ok, parse_args, use_connection
+from shopdesk.tools.common import err, ok, order_not_found, parse_args, use_connection, visible_to
 
 
 def dollars(cents: int) -> str:
@@ -53,7 +53,7 @@ def _answer(order_id, eligible, reason_code, message,
     )
 
 
-def check_refund_eligibility(raw_args: dict, conn=None, now=None) -> dict:
+def check_refund_eligibility(raw_args: dict, conn=None, now=None, session=None) -> dict:
     args, error = parse_args(CheckRefundEligibilityArgs, raw_args)
     if error:
         return error
@@ -62,17 +62,13 @@ def check_refund_eligibility(raw_args: dict, conn=None, now=None) -> dict:
     # ---- 1. Gather the facts ----
     with use_connection(conn) as db:
         order = db.execute(
-            "SELECT o.id, o.status, o.delivered_at, o.total_cents, c.tier "
+            "SELECT o.id, o.customer_id, o.status, o.delivered_at, o.total_cents, c.tier "
             "FROM orders o JOIN customers c ON c.id = o.customer_id "
             "WHERE o.id = ?",
             (args.order_id,),
         ).fetchone()
-        if order is None:
-            return err(
-                "ORDER_NOT_FOUND",
-                f"No order with id {args.order_id}.",
-                "Order IDs are numbers like 1001. Ask the customer to confirm the order number.",
-            )
+        if order is None or not visible_to(session, order["customer_id"]):
+            return order_not_found(args.order_id)
         categories = [
             row["category"]
             for row in db.execute(
@@ -184,7 +180,12 @@ def _refund_payload(db, row, already_processed: bool) -> dict:
     }
 
 
-def _issue(db, args, now) -> dict:
+def _issue(db, args, now, session=None) -> dict:
+    # ---- 0. Is this the signed-in customer's order? (checked FIRST: before anything about the order is revealed) ----
+    owner = db.execute("SELECT customer_id FROM orders WHERE id = ?", (args.order_id,)).fetchone()
+    if owner is None or not visible_to(session, owner["customer_id"]):
+        return order_not_found(args.order_id)
+
     # ---- 1. Is this a RETRY of a refund we already made? (checked FIRST on purpose) ----
     existing = db.execute(
         "SELECT id, order_id, amount_cents, reason, created_at, idempotency_key "
@@ -201,7 +202,7 @@ def _issue(db, args, now) -> dict:
         )
 
     # ---- 2. Is this refund allowed by the policy? ----
-    check = check_refund_eligibility({"order_id": args.order_id}, conn=db, now=now)
+    check = check_refund_eligibility({"order_id": args.order_id}, conn=db, now=now, session=session)
     if not check["ok"]:
         return check
     facts = check["data"]
@@ -248,7 +249,7 @@ def _issue(db, args, now) -> dict:
     return ok(_refund_payload(db, row, already_processed=False))
 
 
-def issue_refund(raw_args: dict, conn=None, now=None) -> dict:
+def issue_refund(raw_args: dict, conn=None, now=None, session=None) -> dict:
     args, error = parse_args(IssueRefundArgs, raw_args)
     if error:
         return error
@@ -259,7 +260,7 @@ def issue_refund(raw_args: dict, conn=None, now=None) -> dict:
         # with another refund. Assumes no transaction is already open on this connection.
         db.execute("BEGIN IMMEDIATE")
         try:
-            result = _issue(db, args, now)
+            result = _issue(db, args, now, session)
         except Exception:
             db.rollback()
             raise
@@ -268,5 +269,3 @@ def issue_refund(raw_args: dict, conn=None, now=None) -> dict:
         else:
             db.rollback()        # nothing to save: release the lock
         return result
-
-

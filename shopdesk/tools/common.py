@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from dataclasses import dataclass
 from typing import Any
 
 from pydantic import ValidationError
@@ -53,3 +54,29 @@ def use_connection(conn=None):
             yield own
         finally:
             own.close()
+
+
+@dataclass(frozen=True)
+class Session:
+    """
+    WHO the customer is. It is created by OUR code from the sign-in, and passed to every tool call
+    by the agent loop. The model never sees it as an argument, so it can neither supply nor change it.
+    """
+    customer_id: int
+
+
+def visible_to(session, owner_id) -> bool:
+    """May this session see data owned by owner_id? (session=None is an internal call: tests, scripts, staff.)"""
+    return session is None or session.customer_id == owner_id
+
+
+def order_not_found(order_id: int) -> dict:
+    """
+    ONE error for both 'no such order' and 'not yours', worded identically, so the agent
+    (or anyone talking to it) cannot use the difference to discover which orders exist.
+    """
+    return err(
+        "ORDER_NOT_FOUND",
+        f"No order with id {order_id}.",
+        "Order IDs are numbers like 1001. Ask the customer to confirm the order number.",
+    )

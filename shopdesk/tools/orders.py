@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
 
-from shopdesk.tools.common import err, ok, parse_args, use_connection
+from shopdesk.tools.common import err, ok, order_not_found, parse_args, use_connection, visible_to
 
 
 # ---------- get_order ----------
@@ -23,7 +23,7 @@ GET_ORDER_SPEC = {
 }
 
 
-def get_order(raw_args: dict, conn=None) -> dict:
+def get_order(raw_args: dict, conn=None, session=None) -> dict:
     args, error = parse_args(GetOrderArgs, raw_args)
     if error:
         return error
@@ -34,12 +34,8 @@ def get_order(raw_args: dict, conn=None) -> dict:
             "FROM orders WHERE id = ?",
             (args.order_id,),
         ).fetchone()
-        if order is None:
-            return err(
-                "ORDER_NOT_FOUND",
-                f"No order with id {args.order_id}.",
-                "Order IDs are numbers like 1001. Ask the customer to confirm the order number.",
-            )
+        if order is None or not visible_to(session, order["customer_id"]):
+            return order_not_found(args.order_id)
 
         items = db.execute(
             "SELECT sku, name, quantity, price_cents, category "
@@ -70,47 +66,37 @@ def get_order(raw_args: dict, conn=None) -> dict:
 class ListCustomerOrdersArgs(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    customer_id: int = Field(..., gt=0, description="Numeric customer ID.")
     limit: int = Field(5, ge=1, le=20, description="How many recent orders to return (1-20).")
 
 
 LIST_CUSTOMER_ORDERS_SPEC = {
     "name": "list_customer_orders",
     "description": (
-        "List a customer's most recent orders, newest first, by numeric customer ID. "
-        "Returns a short summary of each order (not the items). Use this when the "
-        "customer does not know their order number. Money amounts are in cents. "
-        "To see full details of one order, call get_order afterwards."
+        "List the signed-in customer's most recent orders, newest first. You cannot choose which "
+        "customer: it always returns the customer you are talking to. Returns a short summary of each "
+        "order (not the items). Use this when the customer does not know their order number. Money "
+        "amounts are in cents. To see full details of one order, call get_order afterwards."
     ),
     "input_schema": ListCustomerOrdersArgs.model_json_schema(),
 }
 
 
-def list_customer_orders(raw_args: dict, conn=None) -> dict:
+def list_customer_orders(raw_args: dict, conn=None, session=None) -> dict:
     args, error = parse_args(ListCustomerOrdersArgs, raw_args)
     if error:
         return error
+    if session is None:
+        return err("NO_SESSION", "No customer is signed in.", "This tool only works for the signed-in customer.")
 
     with use_connection(conn) as db:
-        customer = db.execute(
-            "SELECT id FROM customers WHERE id = ?", (args.customer_id,)
-        ).fetchone()
-        if customer is None:
-            return err(
-                "CUSTOMER_NOT_FOUND",
-                f"No customer with id {args.customer_id}.",
-                "Customer IDs are numbers. Confirm the customer's identity first.",
-            )
-
         rows = db.execute(
             "SELECT id, status, placed_at, total_cents FROM orders "
             "WHERE customer_id = ? ORDER BY placed_at DESC, id DESC LIMIT ?",
-            (args.customer_id, args.limit),
+            (session.customer_id, args.limit),
         ).fetchall()
 
         return ok(
             {
-                "customer_id": args.customer_id,
                 "orders": [
                     {
                         "order_id": r["id"],

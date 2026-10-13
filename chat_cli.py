@@ -3,7 +3,7 @@ from shopdesk.tracing import Tracer
 
 
 def main():
-    raw = input("Which customer are you? (customer id, or press Enter to skip): ").strip()
+    raw = input("Sign in as which customer? (customer id; without one the agent cannot look up orders): ").strip()
     customer_id = int(raw) if raw.isdigit() else None
     print("Type your message. Type 'quit' to exit.\n")
 

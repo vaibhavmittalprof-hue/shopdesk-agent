@@ -32,17 +32,16 @@ ESCALATE_TO_HUMAN_SPEC = {
 }
 
 
-def escalate_to_human(raw_args: dict, conn=None) -> dict:
+def escalate_to_human(raw_args: dict, conn=None, session=None) -> dict:
     args, error = parse_args(EscalateArgs, raw_args)
     if error:
         return error
 
+    customer_id = session.customer_id if session is not None else None      # who opened it: from the sign-in
     with use_connection(conn) as db:
         cursor = db.execute(
-            # customer_id stays empty for now: the customer's identity must come from the
-            # system, not from the model. We wire that up in M7.
-            "INSERT INTO tickets (customer_id, summary, status, created_at) VALUES (NULL, ?, 'open', ?)",
-            (f"[{args.reason}] {args.summary}", current_time().isoformat(timespec="seconds")),
+            "INSERT INTO tickets (customer_id, summary, status, created_at) VALUES (?, ?, 'open', ?)",
+            (customer_id, f"[{args.reason}] {args.summary}", current_time().isoformat(timespec="seconds")),
         )
         db.commit()
         return ok(

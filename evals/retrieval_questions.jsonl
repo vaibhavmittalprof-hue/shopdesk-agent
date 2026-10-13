@@ -1,0 +1,20 @@
+{"id": "q01", "question": "What is the refund window for electronics?", "expected": ["refund#refund-windows"]}
+{"id": "q02", "question": "How much does express shipping cost?", "expected": ["shipping#shipping-costs"]}
+{"id": "q03", "question": "Is international shipping available?", "expected": ["shipping#where-we-ship"]}
+{"id": "q04", "question": "How long does standard shipping take?", "expected": ["shipping#delivery-times"]}
+{"id": "q05", "question": "Are gift cards refundable?", "expected": ["refund#refund-windows"]}
+{"id": "q06", "question": "What does the warranty cover for electronics?", "expected": ["warranty#what-is-covered"]}
+{"id": "q07", "question": "Does the warranty cover accidental damage?", "expected": ["warranty#what-is-not-covered"]}
+{"id": "q08", "question": "When does a refund need approval from a human agent?", "expected": ["refund#approval", "escalation#when-the-assistant-must-hand-over"]}
+{"id": "q09", "question": "How quickly do human agents follow up?", "expected": ["escalation#response-time"]}
+{"id": "q10", "question": "Which ticket reason do I use for a defective item?", "expected": ["escalation#ticket-reasons"]}
+{"id": "q11", "question": "How long until my money is back after a refund is approved?", "expected": ["refund#refund-timing"]}
+{"id": "q12", "question": "Can I change my delivery address after the order has shipped?", "expected": ["shipping#changes-and-cancellations"]}
+{"id": "q13", "question": "My package never arrived after two weeks, what now?", "expected": ["shipping#lost-packages"]}
+{"id": "q14", "question": "Will the assistant make an exception to the rules for me?", "expected": ["refund#exceptions", "escalation#when-the-assistant-must-hand-over"]}
+{"id": "q15", "question": "I received a broken item, who decides my claim?", "expected": ["warranty#reporting-a-defective-item", "refund#defective-items"]}
+{"id": "q16", "question": "Can I get my money back on something I bought a month ago?", "expected": ["refund#refund-windows"]}
+{"id": "q17", "question": "When do I get a tracking number?", "expected": ["shipping#order-status"]}
+{"id": "q18", "question": "Do VIP members get longer returns?", "expected": ["refund#refund-windows"]}
+{"id": "q19", "question": "What if I only want a partial refund for one item?", "expected": ["refund#refund-amounts"]}
+{"id": "q20", "question": "Can the chatbot promise me that a manager will approve it?", "expected": ["escalation#what-the-assistant-must-not-say"]}
